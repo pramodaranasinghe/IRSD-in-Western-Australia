@@ -1,0 +1,251 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="initial-scale=1,user-scalable=no,maximum-scale=1,width=device-width">
+        <meta name="mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <link rel="stylesheet" href="css/leaflet.css">
+        <link rel="stylesheet" href="css/qgis2web.css"><link rel="stylesheet" href="css/fontawesome-all.min.css">
+        <style>
+        #map {
+            width: 990px;
+            height: 834px;
+        }
+        </style>
+        <title></title>
+    </head>
+    <body>
+        <div id="map">
+        </div>
+        <script src="js/qgis2web_expressions.js"></script>
+        <script src="js/leaflet.js"></script>
+        <script src="js/leaflet.rotatedMarker.js"></script>
+        <script src="js/leaflet.pattern.js"></script>
+        <script src="js/leaflet-hash.js"></script>
+        <script src="js/Autolinker.min.js"></script>
+        <script src="js/rbush.min.js"></script>
+        <script src="js/labelgun.min.js"></script>
+        <script src="js/labels.js"></script>
+        <script src="data/SEIFA_SA2_data_WA_0.js"></script>
+        <script>
+        var map = L.map('map', {
+            zoomControl:true, maxZoom:28, minZoom:1
+        }).fitBounds([[-47.039304565774394,100.65821122964127],[-2.309663254989501,153.77466028619847]]);
+        var hash = new L.Hash(map);
+        map.attributionControl.setPrefix('<a href="https://github.com/tomchadwin/qgis2web" target="_blank">qgis2web</a> &middot; <a href="https://leafletjs.com" title="A JS library for interactive maps">Leaflet</a> &middot; <a href="https://qgis.org">QGIS</a>');
+        var autolinker = new Autolinker({truncate: {length: 30, location: 'smart'}});
+        function removeEmptyRowsFromPopupContent(content, feature) {
+         var tempDiv = document.createElement('div');
+         tempDiv.innerHTML = content;
+         var rows = tempDiv.querySelectorAll('tr');
+         for (var i = 0; i < rows.length; i++) {
+             var td = rows[i].querySelector('td.visible-with-data');
+             var key = td ? td.id : '';
+             if (td && td.classList.contains('visible-with-data') && feature.properties[key] == null) {
+                 rows[i].parentNode.removeChild(rows[i]);
+             }
+         }
+         return tempDiv.innerHTML;
+        }
+        document.querySelector(".leaflet-popup-pane").addEventListener("load", function(event) {
+          var tagName = event.target.tagName,
+            popup = map._popup;
+          // Also check if flag is already set.
+          if (tagName === "IMG" && popup && !popup._updated) {
+            popup._updated = true; // Set flag to prevent looping.
+            popup.update();
+          }
+        }, true);
+        var bounds_group = new L.featureGroup([]);
+        function setBounds() {
+        }
+        function pop_SEIFA_SA2_data_WA_0(feature, layer) {
+            var popupContent = '<table>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['fid'] !== null ? autolinker.link(feature.properties['fid'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['SA2_MAINCODE_2016'] !== null ? autolinker.link(feature.properties['SA2_MAINCODE_2016'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['SA2_5DIGITCODE_2016'] !== null ? autolinker.link(feature.properties['SA2_5DIGITCODE_2016'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['SA2_NAME_2016'] !== null ? autolinker.link(feature.properties['SA2_NAME_2016'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['SA3_CODE_2016'] !== null ? autolinker.link(feature.properties['SA3_CODE_2016'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['SA3_NAME_2016'] !== null ? autolinker.link(feature.properties['SA3_NAME_2016'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['SA4_CODE_2016'] !== null ? autolinker.link(feature.properties['SA4_CODE_2016'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['SA4_NAME_2016'] !== null ? autolinker.link(feature.properties['SA4_NAME_2016'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['GCCSA_CODE_2016'] !== null ? autolinker.link(feature.properties['GCCSA_CODE_2016'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['GCCSA_NAME_2016'] !== null ? autolinker.link(feature.properties['GCCSA_NAME_2016'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['STATE_CODE_2016'] !== null ? autolinker.link(feature.properties['STATE_CODE_2016'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['STATE_NAME_2016'] !== null ? autolinker.link(feature.properties['STATE_NAME_2016'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['AREA_ALBERS_SQKM'] !== null ? autolinker.link(feature.properties['AREA_ALBERS_SQKM'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['fid_2'] !== null ? autolinker.link(feature.properties['fid_2'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['SA2_MAINCODE_2016_2'] !== null ? autolinker.link(feature.properties['SA2_MAINCODE_2016_2'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['SA2_NAME_2016_2'] !== null ? autolinker.link(feature.properties['SA2_NAME_2016_2'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['IRSD_Score'] !== null ? autolinker.link(feature.properties['IRSD_Score'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['IRSD_Decile'] !== null ? autolinker.link(feature.properties['IRSD_Decile'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['IRSAD_Score'] !== null ? autolinker.link(feature.properties['IRSAD_Score'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['IRSAD_Decile'] !== null ? autolinker.link(feature.properties['IRSAD_Decile'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['IER_Score'] !== null ? autolinker.link(feature.properties['IER_Score'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['IER_Decile'] !== null ? autolinker.link(feature.properties['IER_Decile'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['IEO_Score'] !== null ? autolinker.link(feature.properties['IEO_Score'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['IEO_Decile'] !== null ? autolinker.link(feature.properties['IEO_Decile'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['URP'] !== null ? autolinker.link(feature.properties['URP'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['Area_sqm'] !== null ? autolinker.link(feature.properties['Area_sqm'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['PopDensity_pph'] !== null ? autolinker.link(feature.properties['PopDensity_pph'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            layer.bindPopup(popupContent, {maxHeight: 400});
+            var popup = layer.getPopup();
+            var content = popup.getContent();
+            var updatedContent = removeEmptyRowsFromPopupContent(content, feature);
+            popup.setContent(updatedContent);
+        }
+
+        function style_SEIFA_SA2_data_WA_0_0(feature) {
+            if (feature.properties['IRSD_Score'] >= 609.000000 && feature.properties['IRSD_Score'] <= 713.400000 ) {
+                return {
+                pane: 'pane_SEIFA_SA2_data_WA_0',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(11,4,5,1.0)',
+                interactive: true,
+            }
+            }
+            if (feature.properties['IRSD_Score'] >= 713.400000 && feature.properties['IRSD_Score'] <= 817.800000 ) {
+                return {
+                pane: 'pane_SEIFA_SA2_data_WA_0',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(62,53,107,1.0)',
+                interactive: true,
+            }
+            }
+            if (feature.properties['IRSD_Score'] >= 817.800000 && feature.properties['IRSD_Score'] <= 922.200000 ) {
+                return {
+                pane: 'pane_SEIFA_SA2_data_WA_0',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(53,123,163,1.0)',
+                interactive: true,
+            }
+            }
+            if (feature.properties['IRSD_Score'] >= 922.200000 && feature.properties['IRSD_Score'] <= 1026.600000 ) {
+                return {
+                pane: 'pane_SEIFA_SA2_data_WA_0',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(75,194,173,1.0)',
+                interactive: true,
+            }
+            }
+            if (feature.properties['IRSD_Score'] >= 1026.600000 && feature.properties['IRSD_Score'] <= 1131.000000 ) {
+                return {
+                pane: 'pane_SEIFA_SA2_data_WA_0',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(222,245,229,1.0)',
+                interactive: true,
+            }
+            }
+        }
+        map.createPane('pane_SEIFA_SA2_data_WA_0');
+        map.getPane('pane_SEIFA_SA2_data_WA_0').style.zIndex = 400;
+        map.getPane('pane_SEIFA_SA2_data_WA_0').style['mix-blend-mode'] = 'normal';
+        var layer_SEIFA_SA2_data_WA_0 = new L.geoJson(json_SEIFA_SA2_data_WA_0, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_SEIFA_SA2_data_WA_0',
+            layerName: 'layer_SEIFA_SA2_data_WA_0',
+            pane: 'pane_SEIFA_SA2_data_WA_0',
+            onEachFeature: pop_SEIFA_SA2_data_WA_0,
+            style: style_SEIFA_SA2_data_WA_0_0,
+        });
+        bounds_group.addLayer(layer_SEIFA_SA2_data_WA_0);
+        map.addLayer(layer_SEIFA_SA2_data_WA_0);
+        var baseMaps = {};
+        L.control.layers(baseMaps,{'SEIFA_SA2_data_WA<br /><table><tr><td style="text-align: center;"><img src="legend/SEIFA_SA2_data_WA_0_6097130.png" /></td><td>609 - 713</td></tr><tr><td style="text-align: center;"><img src="legend/SEIFA_SA2_data_WA_0_7138181.png" /></td><td>713 - 818</td></tr><tr><td style="text-align: center;"><img src="legend/SEIFA_SA2_data_WA_0_8189222.png" /></td><td>818 - 922</td></tr><tr><td style="text-align: center;"><img src="legend/SEIFA_SA2_data_WA_0_92210273.png" /></td><td>922 - 1027</td></tr><tr><td style="text-align: center;"><img src="legend/SEIFA_SA2_data_WA_0_102711314.png" /></td><td>1027 - 1131</td></tr></table>': layer_SEIFA_SA2_data_WA_0,},{collapsed:false}).addTo(map);
+        setBounds();
+        </script>
+    </body>
+</html>
